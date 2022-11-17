@@ -1,144 +1,116 @@
 const express = require('express');
+const fs = require('fs/promises');
+const path = require('path');
+
 
 const app = express();
-
-const carsDb = require('./carsDb/cars');
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 
-app.get("/cars", (req, res) => {
+app.get("/cars", async (req, res) => {
 
-    res.status(201).json(carsDb);
+    const users = await reader();
 
-    console.log('Data received')
+    res.status(201).json(users);
 
 });
 
-
-app.get('/cars/:carId', (req, res) => {
-
-    const carId = +req.params.carId;
-
-    if (typeof carId === "number") {
-
-        const car = carsDb.find((car, index) => {
-
-            if (index === carId) {
-
-                return car;
-
-            }
-        });
-
-        if (car) {
-
-            res.json(car);
-
-        } else {
-
-            res.json('Car not found');
-
-        }
-    } else {
-
-        res.json('Value is not a number');
-
-    }
-});
-
-
-app.post('/cars', (req, res) => {
+app.post('/cars', async (req, res) => {
 
     const carInfo = req.body;
 
-    if(typeof carInfo["model"] !== "undefined" && typeof carInfo["year"] !== "undefined"){
+    if (carInfo.model.length < 2 || typeof carInfo.model !== 'string') {
 
-        carsDb.push(carInfo);
-
-        res.status(201).json('Created');
-
-    } else {
-
-        res.json('These properties do not exist');
+       return res.status(400).json('Wrong model!');
 
     }
+
+    if (carInfo.year < 1998 || Number.isNaN(+carInfo.year)) {
+
+        return res.status(400).json('Wrong year!');
+
+    }
+
+    const users =await reader();
+
+    const user = {model:carInfo.model,year:carInfo.year, id: users[users.length - 1].id + 1};
+
+    users.push(user);
+
+    //Перезаписуємо маш оновлений масив в нашу базу даних
+    await writer(users);
+
+    res.status(201).json(user);
+
 });
 
 
-app.put('/cars/:carId', (req, res) => {
+app.get('/cars/:carId', async (req, res) => {
 
-    const carId = +req.params.carId;
+    const {carId} = req.params;
 
-    if (typeof carId === "number") {
+    const users = await reader();
 
-        let car = carsDb.find((car, index) => {
+    const user = users.find(user => user.id === +carId);
 
-            if (index === carId) {
-                return car;
-            }
-        });
+    if (!user) {
 
-        if (car) {
-
-            const newCarInfo = req.body;
-
-            if(typeof newCarInfo["model"] !== "undefined" && typeof newCarInfo["year"] !== "undefined"){
-
-                carsDb[carId] = newCarInfo;
-
-                res.json('Updated');
-
-            } else {
-
-                res.json('These properties do not exist');
-
-            }
-        } else {
-
-            res.json('Car not found');
-
-        }
-    } else {
-
-        res.json('Value is not a number');
+        return res.status(404).json(`User with id ${carId} not exist`);
 
     }
+
+    res.json(user);
+
 });
 
 
-app.delete('/cars/:carId', (req, res) => {
+app.put('/cars/:carId', async (req, res) => {
 
-    const carId = +req.params.carId;
+    const {carId} = req.params;
 
-    if (typeof carId === "number") {
+    const newUserInfo = req.body;
 
-        const car = carsDb.find((car, index) => {
+    const users =await reader();
 
-            if (index === carId) {
+    const index = users.findIndex((user) => user.id === +carId);
 
-                return car;
+    if (index === -1) {
 
-            }
-        });
-
-        if (car) {
-
-            carsDb.splice(carId, 1);
-
-            res.status(201).json('Deleted');
-
-        } else {
-
-            res.json('Car not found');
-
-        }
-    } else {
-
-        res.json('Value is not a number');
+        return res.status(404).json(`User with id ${carId} not exist`);
 
     }
+
+    users[index] = {...users[index], ...newUserInfo}
+
+    await writer(users);
+
+    res.status(201).json('Updated');
+
+});
+
+
+app.delete('/cars/:carId', async (req, res) => {
+
+    const {carId} = req.params;
+
+    const users =await reader();
+
+    const index = users.findIndex((user) => user.id === +carId);
+
+    if (index === -1) {
+
+        return res.status(404).json(`User with id ${carId} not exist`);
+
+    }
+
+    users.splice(index, 1);
+
+    await writer(users);
+
+    res.sendStatus(204);
+
 });
 
 
@@ -147,3 +119,21 @@ app.listen(5000, () => {
     console.log("Sever listen 5000");
 
 });
+
+
+const reader =async ()=>{
+
+    const buffer = await fs.readFile(path.join(__dirname, 'carsDb', 'cars.json'));
+
+    const stringBuffer = buffer.toString();
+
+    return JSON.parse(stringBuffer);
+
+}
+
+
+const writer =async (users)=>{
+
+    await fs.writeFile(path.join(__dirname, 'carsDb', 'cars.json'), JSON.stringify(users));
+
+}

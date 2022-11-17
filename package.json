@@ -1,0 +1,21 @@
+{
+  "name": "june-node-2022",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Oleh3131/june-node-2022.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Oleh3131/june-node-2022/issues"
+  },
+  "homepage": "https://github.com/Oleh3131/june-node-2022#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
