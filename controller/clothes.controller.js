@@ -10,10 +10,16 @@ module.exports = {
 
     },
 
-    getById: async (req, res) => {
+    getById: async (req, res,next) => {
+        try {
 
-        res.json(req.foundClothes);
+            res.json(req.foundClothes);
 
+        } catch (e) {
+
+            next(e);
+
+        }
     },
 
     create: async (req, res) => {

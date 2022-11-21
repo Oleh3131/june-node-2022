@@ -1,25 +1,32 @@
 const {fileService} = require("../services");
 
+const customError = require('../error/customError');
+
 module.exports={
 
     checkIsClothesExist:async (req,res,next)=>{
 
-        const {clothesId} = req.params;
+        try {
 
-        const clothes = await fileService.reader();
+            const {clothesId} = req.params;
 
-        const foundClothes = clothes.find(someClothes => someClothes.id === +clothesId);
+            const clothes = await fileService.reader();
 
-        if(!foundClothes){
+            const foundClothes = clothes.find(someClothes => someClothes.id === +clothesId);
 
-            return res.status(404).json(`Clothes with id ${clothesId} not exist`);
+            if(!foundClothes){
+
+                throw new customError(`Clothes with id ${foundClothes} not exist`,404);
+
+            }
+            req.foundClothes = foundClothes;
+
+            next();
+
+        }catch (e){
+
+            next(e);
 
         }
-
-        req.foundClothes = foundClothes;
-
-        next();
-
     }
-
 }
