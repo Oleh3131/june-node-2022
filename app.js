@@ -24,7 +24,7 @@ app.get('/clothes/:clothesId', async (req, res) => {
 
     const foundClothes = clothes.find(someType => someType.id === +clothesId);
 
-    if(!foundClothes){
+    if (!foundClothes) {
 
         return res.status(404).json(`Clothes with id ${clothesId} not exist`);
 
@@ -35,27 +35,55 @@ app.get('/clothes/:clothesId', async (req, res) => {
 });
 
 
-app.post('/clothes',async (req, res)=>{
+app.post('/clothes', async (req, res) => {
 
-    const newClothes = req.body;
+    const createdClothes = req.body;
 
     const clothes = await fileService.reader();
 
+    const newClothes = {
+        id: clothes[clothes.length - 1].id + 1,
+        type: createdClothes.type,
+        price: createdClothes.price
+    }
+
+    clothes.push(newClothes);
+
+    await (fileService.writer(clothes));
+
+    res.status(201).json(newClothes);
+
+});
 
 
-})
+app.put('/clothes/:clothesId', async (req, res) => {
+
+    const {newClothes} = req.body;
+
+    const {clothesId} = req.params;
+
+    const clothes = await fileService.reader();
+
+    const index = clothes.findIndex((someClothes) => someClothes.id === +clothesId);
+
+    if (index === -1) {
+
+        return res.status(404).json(`Clothes with id ${clothesId} not exist`);
+
+    }
+
+    clothes[index] = {...clothes[index], ...newClothes};
+
+    await fileService.writer(clothes);
+
+    res.status(201).json('Updated');
+
+});
 
 
 
 
-
-
-
-
-
-
-
-app.listen(5000,()=>{
+app.listen(5000, () => {
 
     console.log('Server listen 5000');
 
