@@ -17,6 +17,7 @@ app.get("/cars", async (req, res) => {
 
 });
 
+
 app.post('/cars', async (req, res) => {
 
     const carInfo = req.body;
