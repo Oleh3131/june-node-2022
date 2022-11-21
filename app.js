@@ -80,7 +80,28 @@ app.put('/clothes/:clothesId', async (req, res) => {
 
 });
 
+app.delete('/clothes/:clothesId',async (req, res)=>{
 
+    const {clothesId} = req.params;
+
+    const clothes = await fileService.reader();
+
+    const index = clothes.findIndex((someClothes) => someClothes.id === +clothesId);
+
+    if (index === -1) {
+
+        return res.status(404).json(`Clothes with id ${clothesId} not exist`);
+
+    }
+
+
+    clothes.splice(index, 1);
+
+    await fileService.writer(clothes);
+
+    res.sendStatus(204);
+
+})
 
 
 app.listen(5000, () => {

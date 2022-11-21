@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "type": "umbrella",
+    "price": 12
+  },
+  {
+    "id": 2,
+    "type": "brooch",
+    "price": 45
+  },
+  {
+    "id": 3,
+    "type": "raincoat",
+    "price": 15
+  },
+  {
+    "id": 4,
+    "type": "parka",
+    "price": 30
+  },
+  {
+    "id": 5,
+    "type": "sheepskin coat",
+    "price": 40
+  },
+  {
+    "id": 6,
+    "type": "leather jacket",
+    "price": 105
+  },
+  {
+    "id": 7,
+    "type": "jeggings",
+    "price": 1000
+  },
+  {
+    "id": 9,
+    "type": "shirt",
+    "price": 89
+  }
+]
