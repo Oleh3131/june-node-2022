@@ -9,7 +9,6 @@ module.exports = {
         res.status(201).json(clothes);
 
     },
-
     getById: async (req, res,next) => {
         try {
 
