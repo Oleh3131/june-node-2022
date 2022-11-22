@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "clubName": "liverpool",
+    "yearOfFoundation": 1892
+  },
+  {
+    "id": 2,
+    "clubName": "sca",
+    "yearOfFoundation": 1970
+  },
+  {
+    "id": 3,
+    "clubName": "Dynamo",
+    "yearOfFoundation": 1927
+  },
+  {
+    "id": 4,
+    "clubName": "Shakhtar",
+    "yearOfFoundation": 1936
+  },
+  {
+    "id": 5,
+    "clubName": "Arsenal",
+    "yearOfFoundation": 1886
+  },
+  {
+    "id": 6,
+    "clubName": "Manchester United",
+    "yearOfFoundation": 1878
+  }
+]
