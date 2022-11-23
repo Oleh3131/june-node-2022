@@ -11,13 +11,9 @@ module.exports = {
     },
     getById: async (req, res) => {
 
-        const {clubId} = req.params;
+        const club = await req.club;
 
-        const clubs = await fileService.reader();
-
-        const foundClub = clubs.find(club => club.id === +clubId);
-
-        res.status(201).json(foundClub);
+        res.status(201).json(club);
 
     },
 

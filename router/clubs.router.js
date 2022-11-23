@@ -1,11 +1,13 @@
 const router = require('express').Router();
 
+const middleware = require('../middleware/clubs.middleware');
+
 const {getAll, getById, create, updateById, deleteById} = require("../controller/clubs.controller");
 
 
 router.get('/', getAll);
 
-router.get('/:clubId',getById);
+router.get('/:clubId',middleware.isClubExist,getById);
 
 router.post('/',create);
 
