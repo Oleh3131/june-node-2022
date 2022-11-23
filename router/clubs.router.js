@@ -9,7 +9,7 @@ router.get('/', getAll);
 
 router.get('/:clubId',middleware.isClubExist,getById);
 
-router.post('/',create);
+router.post('/',middleware.isClubExist,middleware.isBodyValid,create);
 
 router.put('/:clubId',updateById);
 
