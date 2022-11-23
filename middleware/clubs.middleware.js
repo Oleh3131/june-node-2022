@@ -1,25 +1,28 @@
 const {fileService} = require("../services");
 
+const apiError = require('../error/apiError');
+
 module.exports={
 
     isClubExist:async (req,res,next)=>{
 
-        const {clubId} = req.params;
+        try {
 
-        const clubs = await fileService.reader();
+            const {clubId} = req.params;
+            const clubs = await fileService.reader();
+            const foundClub = clubs.find(club => club.id === +clubId);
 
-        const foundClub = clubs.find(club => club.id === +clubId);
+            if(!foundClub){
 
-        if(!foundClub){
+                throw new apiError('Club not found',404);
 
-            throw new Error('Club not found');
+            }
 
+            req.club = foundClub;
+            next();
+
+        }catch (e){
+            next(e);
         }
-
-        req.club = foundClub;
-
-        next();
-
     }
-
 }

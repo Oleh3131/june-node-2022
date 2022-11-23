@@ -2,72 +2,83 @@ const {fileService} = require("../services");
 
 module.exports = {
 
-    getAll: async (req, res) => {
+    getAll: async (req, res, next) => {
 
-        const clubs = await fileService.reader();
+        try {
 
-        res.status(201).json(clubs);
+            const clubs = await fileService.reader();
+            res.status(201).json(clubs);
 
-    },
-    getById: async (req, res) => {
+        } catch (e) {
+            next(e);
+        }
 
-        const club = await req.club;
-
-        res.status(201).json(club);
-
-    },
-
-    create: async (req, res) => {
-
-        const newClub = req.body;
-
-        const clubs = await fileService.reader();
-
-        const createdClub = {
-            id: clubs[clubs.length - 1].id + 1,
-            clubName: newClub.clubName,
-            yearOfFoundation: newClub.yearOfFoundation
-        };
-
-        clubs.push(createdClub);
-
-        await fileService.writer(clubs);
-
-        res.status(201).json(createdClub);
 
     },
+    getById: async (req, res, next) => {
 
-    updateById: async (req, res) => {
+        try {
 
-        const newClub = req.body;
+            const club = await req.club;
+            res.status(201).json(club);
 
-        const {clubId} = req.params;
-
-        const clubs = await fileService.reader();
-
-        const index = clubs.findIndex(club => club.id === +clubId);
-
-        clubs[index] = {...clubs[index], ...newClub}
-
-        await fileService.writer(clubs);
-
-        res.status(201).json('Updated');
-
+        } catch (e) {
+            next(e)
+        }
     },
 
-    deleteById: async (req, res) => {
+    create: async (req, res, next) => {
 
-        const {clubId} = req.params;
+        try {
 
-        const clubs = await fileService.reader();
+            const newClub = req.body;
+            const clubs = await fileService.reader();
 
-        const index = clubs.findIndex((user) => user.id === +clubId);
+            const createdClub = {
+                id: clubs[clubs.length - 1].id + 1,
+                clubName: newClub.clubName,
+                yearOfFoundation: newClub.yearOfFoundation
+            };
 
-        clubs.splice(index, 1);
+            clubs.push(createdClub);
+            await fileService.writer(clubs);
+            res.status(201).json(createdClub);
 
-        await fileService.writer(clubs);
+        } catch (e) {
+            next(e);
+        }
+    },
 
-        res.sendStatus(204);
+    updateById: async (req, res, next) => {
 
+        try {
+
+            const newClub = req.body;
+            const {clubId} = req.params;
+            const clubs = await fileService.reader();
+            const index = clubs.findIndex(club => club.id === +clubId);
+            clubs[index] = {...clubs[index], ...newClub}
+            await fileService.writer(clubs);
+            res.status(201).json('Updated');
+
+        } catch (e) {
+            next(e);
+        }
+    },
+
+    deleteById: async (req, res,next) => {
+
+        try {
+
+            const {clubId} = req.params;
+            const clubs = await fileService.reader();
+            const index = clubs.findIndex((user) => user.id === +clubId);
+            clubs.splice(index, 1);
+            await fileService.writer(clubs);
+            res.sendStatus(204);
+
+        }catch (e){
+            next(e)
+        }
     }
 }
