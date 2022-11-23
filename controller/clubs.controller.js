@@ -5,7 +5,6 @@ module.exports = {
     getAll: async (req, res, next) => {
 
         try {
-
             const clubs = await fileService.reader();
             res.status(201).json(clubs);
 
@@ -18,7 +17,6 @@ module.exports = {
     getById: async (req, res, next) => {
 
         try {
-
             const club = await req.club;
             res.status(201).json(club);
 
@@ -30,7 +28,6 @@ module.exports = {
     create: async (req, res, next) => {
 
         try {
-
             const newClub = req.body;
             const clubs = await fileService.reader();
 
@@ -52,11 +49,9 @@ module.exports = {
     updateById: async (req, res, next) => {
 
         try {
-
             const newClub = req.body;
-            const {clubId} = req.params;
-            const clubs = await fileService.reader();
-            const index = clubs.findIndex(club => club.id === +clubId);
+            const {club, clubs} = req;
+            const index = clubs.findIndex(c => c.id === club.id);
             clubs[index] = {...clubs[index], ...newClub}
             await fileService.writer(clubs);
             res.status(201).json('Updated');
@@ -69,10 +64,8 @@ module.exports = {
     deleteById: async (req, res,next) => {
 
         try {
-
-            const {clubId} = req.params;
-            const clubs = await fileService.reader();
-            const index = clubs.findIndex((user) => user.id === +clubId);
+            const {club, clubs} = req;
+            const index = clubs.findIndex((c) => c.id === club.id);
             clubs.splice(index, 1);
             await fileService.writer(clubs);
             res.sendStatus(204);

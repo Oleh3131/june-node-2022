@@ -7,13 +7,13 @@ const {getAll, getById, create, updateById, deleteById} = require("../controller
 
 router.get('/', getAll);
 
-router.get('/:clubId',middleware.isClubExist,getById);
+router.get('/:clubId', middleware.isIdValid, middleware.isClubExist, getById);
 
-router.post('/',middleware.isClubExist,middleware.isBodyValid,create);
+router.post('/', middleware.isBodyValidCreate, create);
 
-router.put('/:clubId',updateById);
+router.put('/:clubId', middleware.isIdValid, middleware.isBodyValidUpdate, middleware.isClubExist, updateById);
 
-router.delete('/:clubId',deleteById);
+router.delete('/:clubId', middleware.isIdValid, middleware.isClubExist, deleteById);
 
 
 module.exports = router;

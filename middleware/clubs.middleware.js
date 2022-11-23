@@ -7,7 +7,6 @@ module.exports = {
     isClubExist: async (req, res, next) => {
 
         try {
-
             const {clubId} = req.params;
             const clubs = await fileService.reader();
             const foundClub = clubs.find(club => club.id === +clubId);
@@ -19,6 +18,8 @@ module.exports = {
             }
 
             req.club = foundClub;
+            req.clubs = clubs;
+
             next();
 
         } catch (e) {
@@ -26,23 +27,18 @@ module.exports = {
         }
     },
 
-    isBodyValid: async (req, res, next) => {
+    isBodyValidCreate: (req, res, next) => {
 
         try {
-
             const {clubName, yearOfFoundation} = req.body;
 
-            if (clubName.length < 3 || typeof clubName !== 'string') {
-
-                // return res.status(400).json('Wrong clubName');
+            if (!clubName || clubName.length < 3 || typeof clubName !== 'string') {
 
                 throw new apiError('Wrong clubName', 400);
 
             }
 
-            if (yearOfFoundation < 1750 || Number.isNaN(+yearOfFoundation)) {
-
-                // return res.status(400).json('Wrong yearOfFoundation');
+            if (!yearOfFoundation || yearOfFoundation < 1750 || Number.isNaN(+yearOfFoundation)) {
 
                 throw new apiError('Wrong yearOfFoundation', 400);
 
@@ -53,7 +49,44 @@ module.exports = {
         } catch (e) {
             next(e);
         }
+    },
 
+    isBodyValidUpdate: (req, res, next) => {
+
+        try {
+            const {clubName, yearOfFoundation} = req.body;
+
+            if (clubName && (clubName.length < 3 || typeof clubName !== 'string')) {
+
+                throw new apiError('Wrong clubName', 400);
+
+            }
+
+            if (yearOfFoundation && (yearOfFoundation < 1750 || Number.isNaN(+yearOfFoundation))) {
+
+                throw new apiError('Wrong yearOfFoundation', 400);
+
+            }
+
+            next();
+
+        } catch (e) {
+            next(e);
+        }
+    },
+
+    isIdValid: (req,res,next) => {
+
+        try {
+            const {clubId} = req.params;
+
+            if(clubId<0 || Number.isNaN(+clubId)){
+
+                throw new apiError('Not valid ID', 400);
+
+            }
+        }catch (e){
+            next(e);
+        }
     }
-
 }
