@@ -85,6 +85,9 @@ module.exports = {
                 throw new apiError('Not valid ID', 400);
 
             }
+
+            next();
+
         }catch (e){
             next(e);
         }
