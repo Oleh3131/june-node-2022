@@ -1,6 +1,7 @@
 const fs = require('node:fs/promises');
 const path = require('path');
 
+
 //1) ПЕРШИЙ СПОСІБ ГРАМОТНОГО РІШЕННЯ ЧЕРЕЗ АСИНХРОННІ ФУНКЦІЇ А НЕ КОЛБЕКИ..................................................
 
 // const sortMenFunction = async () => {
