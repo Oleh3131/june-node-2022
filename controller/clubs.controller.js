@@ -12,8 +12,8 @@ module.exports = {
             next(e);
         }
 
-
     },
+
     getById: async (req, res, next) => {
 
         try {
