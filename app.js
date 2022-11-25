@@ -3,6 +3,7 @@ const fs = require('node:fs');
 
 // 1)ПЕРШИЙ СПОСІБ----------------------------------------------------------------------------------------
 
+
 fs.readdir('./men', {withFileTypes: true}, (err, files) => {
 
     for (let file of files) {
