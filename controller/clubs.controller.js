@@ -1,11 +1,12 @@
-const {fileService} = require("../services");
+const Club = require('../footballСlubDb/Club');
 
 module.exports = {
 
     getAll: async (req, res, next) => {
 
         try {
-            const clubs = await fileService.reader();
+            const clubs = await Club.find();
+
             res.status(201).json(clubs);
 
         } catch (e) {
@@ -29,16 +30,9 @@ module.exports = {
 
         try {
             const newClub = req.body;
-            const clubs = await fileService.reader();
 
-            const createdClub = {
-                id: clubs[clubs.length - 1].id + 1,
-                clubName: newClub.clubName,
-                yearOfFoundation: newClub.yearOfFoundation
-            };
+            const createdClub = await Club.create(newClub);
 
-            clubs.push(createdClub);
-            await fileService.writer(clubs);
             res.status(201).json(createdClub);
 
         } catch (e) {
@@ -50,10 +44,9 @@ module.exports = {
 
         try {
             const newClub = req.body;
-            const {club, clubs} = req;
-            const index = clubs.findIndex(c => c.id === club.id);
-            clubs[index] = {...clubs[index], ...newClub}
-            await fileService.writer(clubs);
+
+            await Club.findByIdAndUpdate(req.params.clubId, newClub);
+
             res.status(201).json('Updated');
 
         } catch (e) {
@@ -64,10 +57,9 @@ module.exports = {
     deleteById: async (req, res,next) => {
 
         try {
-            const {club, clubs} = req;
-            const index = clubs.findIndex((c) => c.id === club.id);
-            clubs.splice(index, 1);
-            await fileService.writer(clubs);
+
+            await Club.deleteOne({_id: req.params.clubId});
+
             res.sendStatus(204);
 
         }catch (e){

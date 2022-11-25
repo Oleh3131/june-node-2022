@@ -1,14 +1,13 @@
-const {fileService} = require("../services");
-
 const apiError = require('../error/apiError');
+const Club = require('../footballСlubDb/Club');
 
 module.exports = {
 
     isClubExist: async (req, res, next) => {
         try {
             const {clubId} = req.params;
-            const clubs = await fileService.reader();
-            const foundClub = clubs.find(club => club.id === +clubId);
+
+            const foundClub = await Club.findById(clubId);
 
             if (!foundClub) {
 
@@ -17,7 +16,33 @@ module.exports = {
             }
 
             req.club = foundClub;
-            req.clubs = clubs;
+
+            next();
+
+        } catch (e) {
+            next(e);
+        }
+    },
+
+    checkIsEmailDuplicate: async (req, res, next) => {
+        try {
+            const {email} = req.body;
+
+            if (!email) {
+
+                throw new apiError('Email not present', 400);
+
+            }
+
+            const foundClub = await Club.findOne({email});
+
+            if (foundClub) {
+
+                throw new apiError('Club with this email already exist', 409);
+
+            }
+
+            req.club = foundClub;
 
             next();
 
@@ -70,24 +95,6 @@ module.exports = {
             next();
 
         } catch (e) {
-            next(e);
-        }
-    },
-
-    isIdValid: (req,res,next) => {
-
-        try {
-            const {clubId} = req.params;
-
-            if(clubId<0 || Number.isNaN(+clubId)){
-
-                throw new apiError('Not valid ID', 400);
-
-            }
-
-            next();
-
-        }catch (e){
             next(e);
         }
     }

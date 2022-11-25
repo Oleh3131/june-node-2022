@@ -1,5 +1,6 @@
 const express = require('express');
-
+const mongoose = require('mongoose');
+const configs = require('./config/config');
 const clubsRouter = require('./router/clubs.router');
 
 const app = express();
@@ -17,9 +18,11 @@ app.use((err, req, res, next)=>{
 
 app.use('/clubs', clubsRouter);
 
-app.listen(5000, () => {
+app.listen(configs.PORT, async () => {
 
-    console.log('Server listen 5000');
+    await mongoose.connect(`${configs.MONGO_URL}`);
+
+    console.log(`Server listen ${configs.PORT}`);
 
 });
 
