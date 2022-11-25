@@ -5,7 +5,6 @@ const apiError = require('../error/apiError');
 module.exports = {
 
     isClubExist: async (req, res, next) => {
-
         try {
             const {clubId} = req.params;
             const clubs = await fileService.reader();
